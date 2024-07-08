@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -8,9 +8,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { categoryOptions, difficultyOptions } from "@/constants";
+import useGetQuizSettings from "@/hooks/useGetQuizSettings";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+
 
 const QuizSettings = () => {
   const router = useRouter();
@@ -24,6 +25,9 @@ const QuizSettings = () => {
     );
   };
 
+  const { data } = useGetQuizSettings();
+
+
   return (
     <div className="flex flex-col justify-center items-center gap-4 md:gap-6">
       <Select value={category} onValueChange={(value) => setCategory(value)}>
@@ -31,7 +35,7 @@ const QuizSettings = () => {
           <SelectValue placeholder="Category" />
         </SelectTrigger>
         <SelectContent>
-          {categoryOptions.map((category) => (
+          {data?.categoryOptions.map((category) => (
             <SelectItem value={category.value} key={category.value}>
               {category.option}
             </SelectItem>
@@ -46,7 +50,7 @@ const QuizSettings = () => {
           <SelectValue placeholder="Difficulty" />
         </SelectTrigger>
         <SelectContent>
-          {difficultyOptions.map((difficulty) => (
+          {data?.difficultyOptions.map((difficulty) => (
             <SelectItem value={difficulty.value} key={difficulty.value}>
               {difficulty.option}
             </SelectItem>
