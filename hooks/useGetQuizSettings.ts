@@ -1,5 +1,3 @@
-// hooks/useFetchData.ts
-"use client";
 
 import { ResponseData } from '@/app/api/quiz-settings/route';
 import { useEffect, useState } from 'react';

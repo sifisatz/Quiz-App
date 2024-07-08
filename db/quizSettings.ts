@@ -17,6 +17,13 @@ export const difficultyOptions: Option<Difficulty>[] = [
     },
 ];
 
+// Base points for each difficulty level
+export const basePoints = {
+    [Difficulty.Easy]: 50,
+    [Difficulty.Medium]: 100,
+    [Difficulty.Hard]: 150,
+};
+
 export const categoryOptions: Option<Category>[] = [
     {
         value: Category.GeneralKnowledge,

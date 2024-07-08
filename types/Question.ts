@@ -1,3 +1,5 @@
+import { Category } from "./enums/Category"
+import { Difficulty } from "./enums/Diffuculty"
 
 export type Question = {
     category: Category,

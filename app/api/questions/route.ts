@@ -14,11 +14,7 @@ export async function GET(request: Request) {
     const category = searchParams.get('categories') || 'default';
     const limit = parseInt(searchParams.get('limit') || '10', 10);
     const difficulty = searchParams.get('type') || 'easy';
-    console.log('category', category)
-    console.log('limit', limit)
-    console.log('difficulty', difficulty)
     const questions = await fetchQuestions(category, limit, difficulty);
-    console.log('questions', questions[0])
 
     return NextResponse.json(questions);
 }

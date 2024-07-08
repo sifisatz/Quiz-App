@@ -5,23 +5,15 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { alphabeticNumeral, showCategory } from "@/constants";
 import useModalStore from "@/hooks/useModalStore";
+import { calculatePoints } from "@/lib/utils";
+import { Question } from "@/types/Question";
+import { Difficulty } from "@/types/enums/Diffuculty";
 import { useEffect, useState } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { toast } from "sonner";
 
 type Props = {
-  questions: {
-    category: string;
-    id: string;
-    correctAnswer: string;
-    incorrectAnswers: string[];
-    question: string;
-    tags: string[];
-    type: string;
-    difficulty: string;
-    regions: [];
-    isNiche: boolean;
-  }[];
+  questions: Question[];
   limit: number;
   category: string;
 };
@@ -34,6 +26,8 @@ const Questions = ({ questions, limit, category }: Props) => {
   const [score, setScore] = useState(0);
   const { onOpen } = useModalStore();
   const [key, setKey] = useState(0);
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [elapsedTimes, setElapsedTimes] = useState<number[]>([]);
 
   const handleShuffle = (correctAnswer: string, incorrectAnswers: string[]) => {
     const shuffledAnswers = [...incorrectAnswers];
@@ -47,10 +41,19 @@ const Questions = ({ questions, limit, category }: Props) => {
     return shuffledAnswers;
   };
 
-  const handleCheck = (answer: string, isTimeUp: boolean = false) => {
+  const handleCheck = (answer: string, difficulty: Difficulty, isTimeUp: boolean = false) => {
     setSelected(answer);
-    if (answer === questions[curr].correctAnswer && !isTimeUp)
-      setScore(score + 1);
+    const endTime = new Date();
+    if (startTime) {
+      const elapsedTime = (endTime.getTime() - startTime.getTime()) / 1000;
+      setElapsedTimes([...elapsedTimes, elapsedTime]);
+
+      if (answer === questions[curr].correctAnswer && !isTimeUp) {
+        const points = calculatePoints(elapsedTime, difficulty);
+        setScore(score + points);
+      }
+    }
+
   };
 
   const handleSelect = (i: string) => {
@@ -65,6 +68,7 @@ const Questions = ({ questions, limit, category }: Props) => {
     setCurr((curr) => curr + 1);
     setSelected("");
     setKey((prevKey) => prevKey + 1);
+    setStartTime(new Date());
   };
 
   const handleQuit = () => {
@@ -79,7 +83,7 @@ const Questions = ({ questions, limit, category }: Props) => {
   };
 
   const handleTimeUp = () => {
-    handleCheck(questions[curr].correctAnswer, true);
+    handleCheck(questions[curr].correctAnswer, questions[curr].difficulty, true);
     toast.info("You ran out of Time!");
   };
 
@@ -91,6 +95,8 @@ const Questions = ({ questions, limit, category }: Props) => {
           questions[curr].incorrectAnswers
         )
       );
+      setStartTime(new Date()); // Set start time when question is displayed
+
     }
     setProgressValue((100 / limit) * (curr + 1));
   }, [curr, questions, limit]);
@@ -128,7 +134,7 @@ const Questions = ({ questions, limit, category }: Props) => {
                   key={i}
                   className={`option ${selected && handleSelect(answer)}`}
                   disabled={!!selected}
-                  onClick={() => handleCheck(answer)}
+                  onClick={() => handleCheck(answer, questions[curr].difficulty)}
                 >
                   {alphabeticNumeral(i)}
                   {answer}

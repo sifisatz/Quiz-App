@@ -25,54 +25,59 @@ const QuizSettings = () => {
     );
   };
 
-  const { data } = useGetQuizSettings();
+  const { data, error } = useGetQuizSettings();
 
+  if (error) {
+    return <> something went wrong    </>
+  }
+  if (data) {
+    return (
+      <div className="flex flex-col justify-center items-center gap-4 md:gap-6">
+        <Select value={category} onValueChange={(value) => setCategory(value)}>
+          <SelectTrigger className="w-full md:max-w-xs xl:max-w-md">
+            <SelectValue placeholder="Category" />
+          </SelectTrigger>
+          <SelectContent>
+            {data?.categoryOptions.map((category) => (
+              <SelectItem value={category.value} key={category.value}>
+                {category.option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={difficulty}
+          onValueChange={(value) => setDifficulty(value)}
+        >
+          <SelectTrigger className="w-full md:max-w-xs xl:max-w-md">
+            <SelectValue placeholder="Difficulty" />
+          </SelectTrigger>
+          <SelectContent>
+            {data?.difficultyOptions.map((difficulty) => (
+              <SelectItem value={difficulty.value} key={difficulty.value}>
+                {difficulty.option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="text-sm lg:text-sm font-semibold">
+          Total Questions: {limit[0]}
+        </p>
+        <Slider
+          value={limit}
+          onValueChange={(value: number[]) => setLimit(value)}
+          max={50}
+          step={5}
+          min={5}
+          className="w-full md:max-w-xs xl:max-w-md"
+        />
+        <Button disabled={!difficulty || !category} onClick={handleQuizStart}>
+          Start Quiz
+        </Button>
+      </div>
+    );
 
-  return (
-    <div className="flex flex-col justify-center items-center gap-4 md:gap-6">
-      <Select value={category} onValueChange={(value) => setCategory(value)}>
-        <SelectTrigger className="w-full md:max-w-xs xl:max-w-md">
-          <SelectValue placeholder="Category" />
-        </SelectTrigger>
-        <SelectContent>
-          {data?.categoryOptions.map((category) => (
-            <SelectItem value={category.value} key={category.value}>
-              {category.option}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select
-        value={difficulty}
-        onValueChange={(value) => setDifficulty(value)}
-      >
-        <SelectTrigger className="w-full md:max-w-xs xl:max-w-md">
-          <SelectValue placeholder="Difficulty" />
-        </SelectTrigger>
-        <SelectContent>
-          {data?.difficultyOptions.map((difficulty) => (
-            <SelectItem value={difficulty.value} key={difficulty.value}>
-              {difficulty.option}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <p className="text-sm lg:text-sm font-semibold">
-        Total Questions: {limit[0]}
-      </p>
-      <Slider
-        value={limit}
-        onValueChange={(value: number[]) => setLimit(value)}
-        max={50}
-        step={5}
-        min={5}
-        className="w-full md:max-w-xs xl:max-w-md"
-      />
-      <Button disabled={!difficulty || !category} onClick={handleQuizStart}>
-        Start Quiz
-      </Button>
-    </div>
-  );
+  }
 };
 
 export default QuizSettings;
