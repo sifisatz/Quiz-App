@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { alphabeticNumeral, showCategory } from "@/constants";
 import useModalStore from "@/hooks/useModalStore";
+import useSettingsForm from "@/hooks/useSettingsForm";
 import { calculatePoints } from "@/lib/utils";
 import { Question } from "@/types/Question";
 import { Difficulty } from "@/types/enums/Diffuculty";
@@ -28,7 +29,7 @@ const Questions = ({ questions, limit, category }: Props) => {
   const [key, setKey] = useState(0);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [elapsedTimes, setElapsedTimes] = useState<number[]>([]);
-
+  const name = useSettingsForm(state => state.name)
   const handleShuffle = (correctAnswer: string, incorrectAnswers: string[]) => {
     const shuffledAnswers = [...incorrectAnswers];
 
@@ -106,6 +107,7 @@ const Questions = ({ questions, limit, category }: Props) => {
       <Progress value={progressValue} />
       <div className="flex justify-between items-center py-3 xl:py-4 font-bold text-md">
         <p className="hidden md:block">{showCategory(category)}</p>
+        <p>Nickname : {name}</p>
         <p>Score: {score}</p>
         <CountdownCircleTimer
           key={key}

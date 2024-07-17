@@ -9,12 +9,22 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import useModalStore from "@/hooks/useModalStore";
+import useSettingsForm from "@/hooks/useSettingsForm";
 import { useRouter } from "next/navigation";
 
 const ResultModal = () => {
   const { isOpen, type, onClose, additionalData } = useModalStore();
+  const { resetSettingFormValues } = useSettingsForm();
+
   const open = isOpen && type === "showResults";
   const router = useRouter();
+
+
+  const handleRestart = () => {
+    resetSettingFormValues()
+    router.push("/");
+    onClose();
+  }
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -30,10 +40,8 @@ const ResultModal = () => {
             You scored: {`${additionalData?.score}/${additionalData?.limit}00`}
           </p>
           <Button
-            onClick={() => {
-              router.push("/");
-              onClose();
-            }}
+            onClick={handleRestart}
+
             className="mt-3 md:mt-5"
           >
             Play Again

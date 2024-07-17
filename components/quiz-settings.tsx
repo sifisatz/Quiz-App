@@ -9,15 +9,25 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import useGetQuizSettings from "@/hooks/useGetQuizSettings";
+import useSettingsForm from "@/hooks/useSettingsForm";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import Input from "./ui/input";
 
 
 const QuizSettings = () => {
   const router = useRouter();
-  const [category, setCategory] = useState<string>("");
-  const [difficulty, setDifficulty] = useState<string>("");
-  const [limit, setLimit] = useState([10]);
+
+
+  const { setName, category, setCategory, difficulty, setDifficulty, limit, setLimit } = useSettingsForm(state => ({
+    setName: state.setName,
+    category: state.category,
+    setCategory: state.setCategory,
+    difficulty: state.difficulty,
+    setDifficulty: state.setDifficulty,
+    limit: state.limit,
+    setLimit: state.setLimit,
+  }));
+
 
   const handleQuizStart = () => {
     router.push(
@@ -33,6 +43,8 @@ const QuizSettings = () => {
   if (data) {
     return (
       <div className="flex flex-col justify-center items-center gap-4 md:gap-6">
+        <Input label="Nickname" id="firstName" onChange={(e) => setName(e.target.value)} placeholder="Einstein" />
+
         <Select value={category} onValueChange={(value) => setCategory(value)}>
           <SelectTrigger className="w-full md:max-w-xs xl:max-w-md">
             <SelectValue placeholder="Category" />
